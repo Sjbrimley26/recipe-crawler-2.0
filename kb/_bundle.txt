@@ -1,0 +1,2 @@
+recipe-scraper kb
+Python rewrite of the 2020 recipe-app crawler: what the old one did, what changed on the web, and how ingredient normalization will work.
