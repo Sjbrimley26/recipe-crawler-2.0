@@ -90,3 +90,27 @@ def test_failure_mid_recipe_rolls_back_everything(conn):
         store.save_recipe(conn, "http://x/9", RECIPE, boom)
     assert conn.execute("SELECT count(*) FROM recipe").fetchone()[0] == 0
     assert conn.execute("SELECT count(*) FROM recipe_ingredient").fetchone()[0] == 0
+
+
+class _FakeSite:
+    def __init__(self, pages):
+        self.pages = pages
+
+    def get(self, url):
+        return self.pages.get(url)
+
+
+def test_cli_run_end_to_end(dsn, conn, tmp_path):
+    from pathlib import Path
+
+    from recipe_scraper.cli import run
+
+    html = (Path(__file__).parent / "fixtures" / "cookies.html").read_text()
+    site = _FakeSite({
+        "http://s/": '<a href="/r1">r1</a><a href="/r2">r2</a>',
+        "http://s/r1": html,
+        "http://s/r2": html,
+    })
+    n = run(["http://s/"], dsn, site, tmp_path / "state.json", max_pages=10, max_depth=2)
+    assert n == 2
+    assert conn.execute("SELECT count(*) FROM recipe").fetchone()[0] == 2

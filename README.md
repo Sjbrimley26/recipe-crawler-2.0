@@ -5,7 +5,17 @@ Python rewrite of the crawler in github.com/Sjbrimley26/recipe-app (Node, 2020).
 Status: scaffold. Done: JSON-LD extraction (list / @graph / typed-list safe), polite fetcher
 (real User-Agent, robots.txt, rate limit, bounded retries), tests on a saved fixture.
 Done since: crawl loop (frontier, depth/page limits, atomic resume file), rules parser + seed canonical table + validated model-fallback hook.
-Not done: Postgres storage (one-transaction recipe+ingredients, canonical table in PG, model cache), local-model comparison on ~200 labels, CLI, GitHub push.
+Done since: Postgres storage (one-transaction recipe+ingredients, canonical table in PG, model-answer cache), `recipe-scraper crawl` CLI.
+Not done: local-model comparison on ~200 labels, GitHub push.
+
+## Run it
+```
+docker run -d --name recipes-pg -e POSTGRES_PASSWORD=dev -p 127.0.0.1:5432:5432 postgres:16-alpine
+export DATABASE_URL=postgresql://postgres:dev@127.0.0.1:5432/postgres
+.venv/bin/recipe-scraper crawl --state crawl.json --max-pages 20 --max-depth 2 --interval 3 https://example.com/recipes
+```
+Re-running with the same `--state` resumes; recipes upsert by URL, so repeats are safe. Keep the page limit small and the
+interval polite. `tests/test_store.py` starts its own throwaway postgres container and skips without docker.
 
 Why a rewrite (found 2026-11-18): Allrecipes returns 403 to the axios User-Agent and 200 to a browser one;
 JSON-LD is still present but `@type` is `["Recipe","NewsArticle"]`, which the old exact-match missed.
