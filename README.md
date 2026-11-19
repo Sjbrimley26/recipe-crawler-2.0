@@ -4,7 +4,8 @@ Python rewrite of the crawler in github.com/Sjbrimley26/recipe-app (Node, 2020).
 
 Status: scaffold. Done: JSON-LD extraction (list / @graph / typed-list safe), polite fetcher
 (real User-Agent, robots.txt, rate limit, bounded retries), tests on a saved fixture.
-Not done: crawl loop + frontier, Postgres storage, ingredient normalization.
+Done since: crawl loop (frontier, depth/page limits, atomic resume file), rules parser + seed canonical table + validated model-fallback hook.
+Not done: Postgres storage (one-transaction recipe+ingredients, canonical table in PG, model cache), local-model comparison on ~200 labels, CLI, GitHub push.
 
 Why a rewrite (found 2026-11-18): Allrecipes returns 403 to the axios User-Agent and 200 to a browser one;
 JSON-LD is still present but `@type` is `["Recipe","NewsArticle"]`, which the old exact-match missed.
