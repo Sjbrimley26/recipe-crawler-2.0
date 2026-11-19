@@ -3,7 +3,7 @@ name = "recipe-scraper"
 version = "0.1.0"
 description = "Polite recipe crawler: JSON-LD extraction, resumable, normalized ingredients (Python rewrite of Sjbrimley26/recipe-app crawler)"
 requires-python = ">=3.11"
-dependencies = ["httpx>=0.27", "beautifulsoup4>=4.12"]
+dependencies = ["httpx>=0.27", "beautifulsoup4>=4.12", "psycopg[binary]>=3.2"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
